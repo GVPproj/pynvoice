@@ -1,26 +1,7 @@
 import sqlite3
 import os
 import curses
-
-DB_FILE = "pynvoice.db"
-
-
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute(
-        """
-        CREATE TABLE IF NOT EXISTS sender (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            address TEXT,
-            email TEXT,
-            phone TEXT
-        )
-    """
-    )
-    conn.commit()
-    conn.close()
+from database import DB_FILE, init_db, list_senders
 
 
 def create_sender_curses(stdscr):
@@ -61,15 +42,6 @@ def create_sender_curses(stdscr):
     stdscr.addstr(len(prompts) + 4, 0, "Press any key to continue...")
     stdscr.refresh()
     stdscr.getch()
-
-
-def list_senders():
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    c.execute("SELECT id, name, address, email, phone FROM sender")
-    senders = c.fetchall()
-    conn.close()
-    return senders
 
 
 def run_app(stdscr):
@@ -130,14 +102,10 @@ def run_app(stdscr):
 
             if idx == current_selection_idx:
                 stdscr.attron(curses.A_REVERSE)  # Highlight selected item
-                stdscr.addstr(
-                    y_pos, 2, f"> {display_str_truncated(stdscr, display_str, 4)}"
-                )
+                stdscr.addstr(y_pos, 2, f"> {display_str_truncated(display_str, 4)}")
                 stdscr.attroff(curses.A_REVERSE)
             else:
-                stdscr.addstr(
-                    y_pos, 2, f"  {display_str_truncated(stdscr, display_str, 4)}"
-                )
+                stdscr.addstr(y_pos, 2, f"  {display_str_truncated(display_str, 4)}")
 
         stdscr.refresh()
         key = stdscr.getch()
@@ -183,7 +151,7 @@ def run_app(stdscr):
     # End of while True loop (application exit)
 
 
-def display_str_truncated(stdscr, text, padding_left):
+def display_str_truncated(text, padding_left):
     """Truncates string to fit window width"""
     max_len = curses.COLS - padding_left - 1  # -1 for safety
     if len(text) > max_len:
