@@ -369,7 +369,7 @@ class ClientManagementScreen(Screen):
 class PyNvoiceApp(App):
     """Main PyNvoice application."""
 
-    CSS_PATH = "styles.css"
+    CSS_PATH = "styles.tcss"
 
     BINDINGS = [
         Binding("q", "quit", "Quit Application"),
