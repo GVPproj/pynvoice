@@ -1,402 +1,465 @@
 import sqlite3
-import os
-import curses
+from textual.app import App, ComposeResult
+from textual.containers import Container, Vertical, Horizontal
+from textual.widgets import (
+    Button,
+    Header,
+    Footer,
+    Static,
+    ListView,
+    ListItem,
+    Label,
+    Input,
+)
+from textual.screen import Screen
+from textual.binding import Binding
 from database import DB_FILE, init_db, list_senders, list_clients, create_client
 
 
-def create_sender_curses(stdscr):
-    """Handles creation of a new sender using curses for I/O."""
-    curses.echo()  # Enable echoing of input characters
-    stdscr.clear()
-    stdscr.addstr(0, 0, "--- Create New Sender ---")
-    stdscr.addstr(1, 0, "Please enter the sender's details below:")
+class CreateSenderScreen(Screen):
+    """Screen for creating a new sender."""
 
-    details = {}
-    prompts = [("Name", 3, 0), ("Address", 4, 0), ("Email", 5, 0), ("Phone", 6, 0)]
+    BINDINGS = [
+        Binding("escape", "cancel", "Cancel"),
+    ]
 
-    for prompt_text, y, x_label in prompts:
-        stdscr.addstr(y, x_label, f"{prompt_text}: ")
-        stdscr.refresh()
-        # Move cursor to input position
-        input_val = (
-            stdscr.getstr(y, x_label + len(prompt_text) + 2).decode("utf-8").strip()
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static("Create New Sender", classes="title"),
+            Static("Please enter the sender's details below:"),
+            Container(
+                Label("Name:"),
+                Input(placeholder="Enter sender name", id="name"),
+                classes="field",
+            ),
+            Container(
+                Label("Address:"),
+                Input(placeholder="Enter sender address", id="address"),
+                classes="field",
+            ),
+            Container(
+                Label("Email:"),
+                Input(placeholder="Enter sender email", id="email"),
+                classes="field",
+            ),
+            Container(
+                Label("Phone:"),
+                Input(placeholder="Enter sender phone", id="phone"),
+                classes="field",
+            ),
+            Horizontal(
+                Button("Create Sender", variant="primary", id="create"),
+                Button("Cancel", variant="default", id="cancel"),
+                classes="buttons",
+            ),
+            Static("", id="message"),
+            classes="create-form",
         )
-        details[prompt_text.lower()] = input_val
+        yield Footer()
 
-    curses.noecho()  # Disable echoing
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "create":
+            self.create_sender()
+        elif event.button.id == "cancel":
+            self.action_cancel()
 
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    try:
-        c.execute(
-            "INSERT INTO sender (name, address, email, phone) VALUES (?, ?, ?, ?)",
-            (details["name"], details["address"], details["email"], details["phone"]),
-        )
-        conn.commit()
-        stdscr.addstr(len(prompts) + 3, 0, "Sender created successfully!")
-    except sqlite3.Error as e:
-        stdscr.addstr(len(prompts) + 3, 0, f"Database error: {e}")
-    finally:
-        conn.close()
+    def create_sender(self):
+        name = self.query_one("#name", Input).value.strip()
+        address = self.query_one("#address", Input).value.strip()
+        email = self.query_one("#email", Input).value.strip()
+        phone = self.query_one("#phone", Input).value.strip()
 
-    stdscr.addstr(len(prompts) + 4, 0, "Press any key to continue...")
-    stdscr.refresh()
-    stdscr.getch()
+        if not name:
+            self.query_one("#message", Static).update("Error: Sender name is required!")
+            return
 
-
-def create_client_curses(stdscr):
-    """Handles creation of a new client using curses for I/O as per FR2.1"""
-    curses.echo()  # Enable echoing of input characters
-    stdscr.clear()
-    stdscr.addstr(0, 0, "--- Create New Client ---")
-    stdscr.addstr(1, 0, "Please enter the client's details below:")
-    stdscr.addstr(2, 0, "(Name is required, Address and Email are optional)")
-
-    details = {}
-    prompts = [("Name", 4, 0), ("Address", 5, 0), ("Email", 6, 0)]
-
-    for prompt_text, y, x_label in prompts:
-        required_indicator = " *" if prompt_text == "Name" else " (optional)"
-        stdscr.addstr(y, x_label, f"{prompt_text}{required_indicator}: ")
-        stdscr.refresh()
-        # Move cursor to input position
-        input_val = (
-            stdscr.getstr(y, x_label + len(prompt_text) + len(required_indicator) + 2)
-            .decode("utf-8")
-            .strip()
-        )
-        details[prompt_text.lower()] = input_val if input_val else None
-
-    curses.noecho()  # Disable echoing
-
-    try:
-        if not details["name"]:
-            stdscr.addstr(len(prompts) + 3, 0, "Error: Client name is required!")
-        else:
-            client_id = create_client(
-                details["name"], details["address"], details["email"]
+        try:
+            conn = sqlite3.connect(DB_FILE)
+            c = conn.cursor()
+            c.execute(
+                "INSERT INTO sender (name, address, email, phone) VALUES (?, ?, ?, ?)",
+                (name, address, email, phone),
             )
-            stdscr.addstr(
-                len(prompts) + 3, 0, f"Client created successfully! (ID: {client_id})"
+            conn.commit()
+            conn.close()
+            self.query_one("#message", Static).update("Sender created successfully!")
+            # Clear the form
+            self.query_one("#name", Input).value = ""
+            self.query_one("#address", Input).value = ""
+            self.query_one("#email", Input).value = ""
+            self.query_one("#phone", Input).value = ""
+        except sqlite3.Error as e:
+            self.query_one("#message", Static).update(f"Database error: {e}")
+
+    def action_cancel(self):
+        self.app.pop_screen()
+
+
+class CreateClientScreen(Screen):
+    """Screen for creating a new client."""
+
+    BINDINGS = [
+        Binding("escape", "cancel", "Cancel"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static("Create New Client", classes="title"),
+            Static("Please enter the client's details below:"),
+            Static("(Name is required, Address and Email are optional)"),
+            Container(
+                Label("Name *:"),
+                Input(placeholder="Enter client name", id="name"),
+                classes="field",
+            ),
+            Container(
+                Label("Address (optional):"),
+                Input(placeholder="Enter client address", id="address"),
+                classes="field",
+            ),
+            Container(
+                Label("Email (optional):"),
+                Input(placeholder="Enter client email", id="email"),
+                classes="field",
+            ),
+            Horizontal(
+                Button("Create Client", variant="primary", id="create"),
+                Button("Cancel", variant="default", id="cancel"),
+                classes="buttons",
+            ),
+            Static("", id="message"),
+            classes="create-form",
+        )
+        yield Footer()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "create":
+            self.create_client()
+        elif event.button.id == "cancel":
+            self.action_cancel()
+
+    def create_client(self):
+        name = self.query_one("#name", Input).value.strip()
+        address = self.query_one("#address", Input).value.strip() or None
+        email = self.query_one("#email", Input).value.strip() or None
+
+        try:
+            if not name:
+                self.query_one("#message", Static).update(
+                    "Error: Client name is required!"
+                )
+                return
+
+            client_id = create_client(name, address, email)
+            self.query_one("#message", Static).update(
+                f"Client created successfully! (ID: {client_id})"
             )
-    except ValueError as e:
-        stdscr.addstr(len(prompts) + 3, 0, f"Validation error: {e}")
-    except sqlite3.Error as e:
-        stdscr.addstr(len(prompts) + 3, 0, f"Database error: {e}")
+            # Clear the form
+            self.query_one("#name", Input).value = ""
+            self.query_one("#address", Input).value = ""
+            self.query_one("#email", Input).value = ""
+        except ValueError as e:
+            self.query_one("#message", Static).update(f"Validation error: {e}")
+        except sqlite3.Error as e:
+            self.query_one("#message", Static).update(f"Database error: {e}")
 
-    stdscr.addstr(len(prompts) + 4, 0, "Press any key to continue...")
-    stdscr.refresh()
-    stdscr.getch()
+    def action_cancel(self):
+        self.app.pop_screen()
 
 
-def run_sender_management(stdscr):
-    """Sender management interface"""
-    curses.curs_set(0)  # Hide the cursor
-    stdscr.keypad(True)  # Enable special keys like arrow keys
-    current_selection_idx = 0
+class SenderDetailScreen(Screen):
+    """Screen for displaying sender details."""
 
-    while True:
-        stdscr.clear()
+    BINDINGS = [
+        Binding("escape", "back", "Back"),
+    ]
+
+    def __init__(self, sender_data):
+        super().__init__()
+        self.sender_data = sender_data
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static(f"Selected Sender: {self.sender_data[1]}", classes="title"),
+            Static(f"ID: {self.sender_data[0]}"),
+            Static(f"Name: {self.sender_data[1]}"),
+            Static(f"Address: {self.sender_data[2]}"),
+            Static(f"Email: {self.sender_data[3]}"),
+            Static(f"Phone: {self.sender_data[4]}"),
+            Static(""),
+            Static("This sender is now notionally selected."),
+            Static(
+                "(In a full app, you might proceed to create an invoice with this sender.)"
+            ),
+            Static(""),
+            Button("Back to Menu", variant="primary", id="back"),
+            classes="detail-view",
+        )
+        yield Footer()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "back":
+            self.action_back()
+
+    def action_back(self):
+        self.app.pop_screen()
+
+
+class ClientDetailScreen(Screen):
+    """Screen for displaying client details."""
+
+    BINDINGS = [
+        Binding("escape", "back", "Back"),
+    ]
+
+    def __init__(self, client_data):
+        super().__init__()
+        self.client_data = client_data
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static(f"Selected Client: {self.client_data[1]}", classes="title"),
+            Static(f"ID: {self.client_data[0]}"),
+            Static(f"Name: {self.client_data[1]}"),
+            Static(
+                f"Address: {self.client_data[2] if self.client_data[2] else 'Not provided'}"
+            ),
+            Static(
+                f"Email: {self.client_data[3] if self.client_data[3] else 'Not provided'}"
+            ),
+            Static(""),
+            Static("This client is now notionally selected."),
+            Static(
+                "(In a full app, you might proceed to create an invoice for this client.)"
+            ),
+            Static(""),
+            Button("Back to Menu", variant="primary", id="back"),
+            classes="detail-view",
+        )
+        yield Footer()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "back":
+            self.action_back()
+
+    def action_back(self):
+        self.app.pop_screen()
+
+
+class SenderManagementScreen(Screen):
+    """Screen for managing senders."""
+
+    BINDINGS = [
+        Binding("escape", "back", "Back to Main Menu"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static("Sender Management", classes="title"),
+            Static("(Select a sender to view details, or create a new one)"),
+            Horizontal(
+                Button("Create New Sender", variant="primary", id="create"),
+                Button("Back to Main Menu", variant="default", id="back"),
+                classes="buttons",
+            ),
+            ListView(id="sender-list"),
+            classes="management-screen",
+        )
+        yield Footer()
+
+    def on_mount(self):
+        self.refresh_senders()
+
+    def refresh_senders(self):
+        sender_list = self.query_one("#sender-list", ListView)
+        sender_list.clear()
+
         senders = list_senders()
-
-        # Menu Title
-        stdscr.addstr(0, 0, "--- Sender Management ---")
-        stdscr.addstr(
-            1, 0, "(Use UP/DOWN arrows to navigate, ENTER to select, 'q' to go back)"
-        )
-
-        menu_items = []
-
-        header_y = 3
         if senders:
-            stdscr.addstr(header_y, 0, "Existing Senders:")
             for sender_data in senders:
-                # sender_data is (id, name, address, email, phone)
                 display_text = f"{sender_data[1]} (ID: {sender_data[0]}) | Addr: {sender_data[2]} | Email: {sender_data[3]} | Phone: {sender_data[4]}"
-                menu_items.append(
-                    {"type": "sender", "data": sender_data, "display": display_text}
-                )
-            items_start_y = header_y + 1
+                item = ListItem(Label(display_text))
+                item.sender_data = sender_data
+                sender_list.append(item)
         else:
-            stdscr.addstr(header_y, 0, "No senders found.")
-            items_start_y = header_y + 1
+            sender_list.append(ListItem(Label("No senders found.")))
 
-        # Action items
-        menu_items.append(
-            {"type": "action", "data": "create", "display": "Create New Sender"}
+    def on_list_view_selected(self, event: ListView.Selected) -> None:
+        if hasattr(event.item, "sender_data"):
+            self.app.push_screen(SenderDetailScreen(event.item.sender_data))
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "create":
+            self.app.push_screen(CreateSenderScreen())
+        elif event.button.id == "back":
+            self.action_back()
+
+    def on_screen_resume(self):
+        # Refresh the list when returning from create screen
+        self.refresh_senders()
+
+    def action_back(self):
+        self.app.pop_screen()
+
+
+class ClientManagementScreen(Screen):
+    """Screen for managing clients."""
+
+    BINDINGS = [
+        Binding("escape", "back", "Back to Main Menu"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static("Client Management", classes="title"),
+            Static("(Select a client to view details, or create a new one)"),
+            Horizontal(
+                Button("Create New Client", variant="primary", id="create"),
+                Button("Back to Main Menu", variant="default", id="back"),
+                classes="buttons",
+            ),
+            ListView(id="client-list"),
+            classes="management-screen",
         )
-        menu_items.append(
-            {"type": "action", "data": "back", "display": "Back to Main Menu"}
-        )
+        yield Footer()
 
-        for idx, item in enumerate(menu_items):
-            y_pos = items_start_y + idx
-            display_str = item["display"]
+    def on_mount(self):
+        self.refresh_clients()
 
-            # Ensure we don't try to write past screen boundaries
-            if y_pos >= curses.LINES - 1:  # curses.LINES gives terminal height
-                stdscr.addstr(curses.LINES - 1, 0, "Too many items to display!")
-                break
+    def refresh_clients(self):
+        client_list = self.query_one("#client-list", ListView)
+        client_list.clear()
 
-            if idx == current_selection_idx:
-                stdscr.attron(curses.A_REVERSE)  # Highlight selected item
-                stdscr.addstr(y_pos, 2, f"> {display_str_truncated(display_str, 4)}")
-                stdscr.attroff(curses.A_REVERSE)
-            else:
-                stdscr.addstr(y_pos, 2, f"  {display_str_truncated(display_str, 4)}")
-
-        stdscr.refresh()
-        key = stdscr.getch()
-
-        if key == curses.KEY_UP:
-            current_selection_idx = (current_selection_idx - 1 + len(menu_items)) % len(
-                menu_items
-            )
-        elif key == curses.KEY_DOWN:
-            current_selection_idx = (current_selection_idx + 1) % len(menu_items)
-        elif key == curses.KEY_ENTER or key in [10, 13]:  # 10 is LF, 13 is CR
-            if not menu_items:  # Should not happen if Back is always an option
-                continue
-
-            selected_option = menu_items[current_selection_idx]
-
-            if selected_option["type"] == "sender":
-                sender = selected_option["data"]
-                stdscr.clear()
-                stdscr.addstr(0, 0, f"--- Selected Sender: {sender[1]} ---")
-                stdscr.addstr(2, 0, f"ID: {sender[0]}")
-                stdscr.addstr(3, 0, f"Name: {sender[1]}")
-                stdscr.addstr(4, 0, f"Address: {sender[2]}")
-                stdscr.addstr(5, 0, f"Email: {sender[3]}")
-                stdscr.addstr(6, 0, f"Phone: {sender[4]}")
-                stdscr.addstr(8, 0, "This sender is now notionally selected.")
-                stdscr.addstr(
-                    9,
-                    0,
-                    "(In a full app, you might proceed to create an invoice with this sender.)",
-                )
-                stdscr.addstr(11, 0, "Press any key to return to the menu.")
-                stdscr.refresh()
-                stdscr.getch()
-            elif selected_option["data"] == "create":
-                create_sender_curses(stdscr)
-                current_selection_idx = 0  # Reset selection to top after creation
-            elif selected_option["data"] == "back":
-                break  # Exit the while True loop
-
-        elif key == ord("q") or key == ord("Q"):  # Allow 'q' to go back
-            break
-
-
-def run_client_management(stdscr):
-    """Client management interface as per FR2.2"""
-    curses.curs_set(0)  # Hide the cursor
-    stdscr.keypad(True)  # Enable special keys like arrow keys
-    current_selection_idx = 0
-
-    while True:
-        stdscr.clear()
         clients = list_clients()
-
-        # Menu Title
-        stdscr.addstr(0, 0, "--- Client Management ---")
-        stdscr.addstr(
-            1, 0, "(Use UP/DOWN arrows to navigate, ENTER to select, 'q' to go back)"
-        )
-
-        menu_items = []
-
-        header_y = 3
         if clients:
-            stdscr.addstr(header_y, 0, "Existing Clients:")
             for client_data in clients:
-                # client_data is (id, name, address, email)
                 address_display = client_data[2] if client_data[2] else "N/A"
                 email_display = client_data[3] if client_data[3] else "N/A"
                 display_text = f"{client_data[1]} (ID: {client_data[0]}) | Addr: {address_display} | Email: {email_display}"
-                menu_items.append(
-                    {"type": "client", "data": client_data, "display": display_text}
-                )
-            items_start_y = header_y + 1
+                item = ListItem(Label(display_text))
+                item.client_data = client_data
+                client_list.append(item)
         else:
-            stdscr.addstr(header_y, 0, "No clients found.")
-            items_start_y = header_y + 1
+            client_list.append(ListItem(Label("No clients found.")))
 
-        # Action items
-        menu_items.append(
-            {"type": "action", "data": "create", "display": "Create New Client"}
+    def on_list_view_selected(self, event: ListView.Selected) -> None:
+        if hasattr(event.item, "client_data"):
+            self.app.push_screen(ClientDetailScreen(event.item.client_data))
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "create":
+            self.app.push_screen(CreateClientScreen())
+        elif event.button.id == "back":
+            self.action_back()
+
+    def on_screen_resume(self):
+        # Refresh the list when returning from create screen
+        self.refresh_clients()
+
+    def action_back(self):
+        self.app.pop_screen()
+
+
+class PyNvoiceApp(App):
+    """Main PyNvoice application."""
+
+    CSS = """
+    .title {
+        text-style: bold;
+        color: $accent;
+        margin: 1;
+    }
+    
+    .field {
+        height: 3;
+        margin: 0 1;
+    }
+    
+    .buttons {
+        align: center middle;
+        margin: 1;
+    }
+    
+    .create-form {
+        width: 80;
+        margin: 1;
+        border: solid $primary;
+        padding: 1;
+    }
+    
+    .management-screen {
+        margin: 1;
+        padding: 1;
+    }
+    
+    .detail-view {
+        width: 80;
+        margin: 1;
+        border: solid $primary;
+        padding: 1;
+    }
+    
+    ListView {
+        height: 15;
+        border: solid $primary;
+        margin: 1 0;
+    }
+    
+    Button {
+        margin: 0 1;
+    }
+    """
+
+    BINDINGS = [
+        Binding("q", "quit", "Quit Application"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Container(
+            Static("PyNvoice Main Menu", classes="title"),
+            Static("(Select an option below to continue)"),
+            Container(
+                Button("Sender Management", variant="primary", id="sender_management"),
+                Button("Client Management", variant="primary", id="client_management"),
+                Button("Exit Application", variant="default", id="exit"),
+                classes="buttons",
+            ),
+            classes="main-menu",
         )
-        menu_items.append(
-            {"type": "action", "data": "back", "display": "Back to Main Menu"}
-        )
+        yield Footer()
 
-        for idx, item in enumerate(menu_items):
-            y_pos = items_start_y + idx
-            display_str = item["display"]
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "sender_management":
+            self.push_screen(SenderManagementScreen())
+        elif event.button.id == "client_management":
+            self.push_screen(ClientManagementScreen())
+        elif event.button.id == "exit":
+            self.exit()
 
-            # Ensure we don't try to write past screen boundaries
-            if y_pos >= curses.LINES - 1:  # curses.LINES gives terminal height
-                stdscr.addstr(curses.LINES - 1, 0, "Too many items to display!")
-                break
-
-            if idx == current_selection_idx:
-                stdscr.attron(curses.A_REVERSE)  # Highlight selected item
-                stdscr.addstr(y_pos, 2, f"> {display_str_truncated(display_str, 4)}")
-                stdscr.attroff(curses.A_REVERSE)
-            else:
-                stdscr.addstr(y_pos, 2, f"  {display_str_truncated(display_str, 4)}")
-
-        stdscr.refresh()
-        key = stdscr.getch()
-
-        if key == curses.KEY_UP:
-            current_selection_idx = (current_selection_idx - 1 + len(menu_items)) % len(
-                menu_items
-            )
-        elif key == curses.KEY_DOWN:
-            current_selection_idx = (current_selection_idx + 1) % len(menu_items)
-        elif key == curses.KEY_ENTER or key in [10, 13]:  # 10 is LF, 13 is CR
-            if not menu_items:  # Should not happen if Back is always an option
-                continue
-
-            selected_option = menu_items[current_selection_idx]
-
-            if selected_option["type"] == "client":
-                client = selected_option["data"]
-                stdscr.clear()
-                stdscr.addstr(0, 0, f"--- Selected Client: {client[1]} ---")
-                stdscr.addstr(2, 0, f"ID: {client[0]}")
-                stdscr.addstr(3, 0, f"Name: {client[1]}")
-                stdscr.addstr(
-                    4, 0, f"Address: {client[2] if client[2] else 'Not provided'}"
-                )
-                stdscr.addstr(
-                    5, 0, f"Email: {client[3] if client[3] else 'Not provided'}"
-                )
-                stdscr.addstr(7, 0, "This client is now notionally selected.")
-                stdscr.addstr(
-                    8,
-                    0,
-                    "(In a full app, you might proceed to create an invoice for this client.)",
-                )
-                stdscr.addstr(10, 0, "Press any key to return to the menu.")
-                stdscr.refresh()
-                stdscr.getch()
-            elif selected_option["data"] == "create":
-                create_client_curses(stdscr)
-                current_selection_idx = 0  # Reset selection to top after creation
-            elif selected_option["data"] == "back":
-                break  # Exit the while True loop
-
-        elif key == ord("q") or key == ord("Q"):  # Allow 'q' to go back
-            break
-
-
-def run_app(stdscr):
-    """Main application function using curses."""
-    curses.curs_set(0)  # Hide the cursor
-    stdscr.keypad(True)  # Enable special keys like arrow keys
-
-    # Optional: Initialize color pairs if you want to use colors
-    curses.start_color()
-    curses.use_default_colors()
-    # curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE) # Example: highlighted item
-
-    current_selection_idx = 0
-
-    while True:
-        stdscr.clear()
-
-        # Menu Title
-        stdscr.addstr(0, 0, "--- PyNvoice Main Menu ---")
-        stdscr.addstr(
-            1, 0, "(Use UP/DOWN arrows to navigate, ENTER to select, 'q' to quit)"
-        )
-
-        menu_items = [
-            {
-                "type": "action",
-                "data": "sender_management",
-                "display": "Sender Management",
-            },
-            {
-                "type": "action",
-                "data": "client_management",
-                "display": "Client Management",
-            },
-            {"type": "action", "data": "exit", "display": "Exit Application"},
-        ]
-
-        items_start_y = 3
-        for idx, item in enumerate(menu_items):
-            y_pos = items_start_y + idx
-            display_str = item["display"]
-
-            # Ensure we don't try to write past screen boundaries
-            if y_pos >= curses.LINES - 1:  # curses.LINES gives terminal height
-                stdscr.addstr(curses.LINES - 1, 0, "Too many items to display!")
-                break
-
-            if idx == current_selection_idx:
-                stdscr.attron(curses.A_REVERSE)  # Highlight selected item
-                stdscr.addstr(y_pos, 2, f"> {display_str_truncated(display_str, 4)}")
-                stdscr.attroff(curses.A_REVERSE)
-            else:
-                stdscr.addstr(y_pos, 2, f"  {display_str_truncated(display_str, 4)}")
-
-        stdscr.refresh()
-        key = stdscr.getch()
-
-        if key == curses.KEY_UP:
-            current_selection_idx = (current_selection_idx - 1 + len(menu_items)) % len(
-                menu_items
-            )
-        elif key == curses.KEY_DOWN:
-            current_selection_idx = (current_selection_idx + 1) % len(menu_items)
-        elif key == curses.KEY_ENTER or key in [10, 13]:  # 10 is LF, 13 is CR
-            selected_option = menu_items[current_selection_idx]
-
-            if selected_option["data"] == "sender_management":
-                run_sender_management(stdscr)
-                current_selection_idx = 0  # Reset selection after returning
-            elif selected_option["data"] == "client_management":
-                run_client_management(stdscr)
-                current_selection_idx = 0  # Reset selection after returning
-            elif selected_option["data"] == "exit":
-                break  # Exit the while True loop
-
-        elif key == ord("q") or key == ord("Q"):  # Allow 'q' to quit
-            break
-    # End of while True loop (application exit)
-
-
-def display_str_truncated(text, padding_left):
-    """Truncates string to fit window width"""
-    max_len = curses.COLS - padding_left - 1  # -1 for safety
-    if len(text) > max_len:
-        return text[: max_len - 3] + "..."
-    return text
+    def action_quit(self):
+        self.exit()
 
 
 if __name__ == "__main__":
+    import os
+
     # Ensure DB_FILE path is correctly handled if it's relative
-    # For simplicity, assuming it's in the current working directory or init_db handles it.
     if not os.path.exists(DB_FILE):
-        # This print might be overwritten by curses quickly, but good for pre-curses info
         print(f"Database file '{DB_FILE}' not found. It will be created.")
 
     init_db()  # Initialize database schema if needed
 
     try:
-        curses.wrapper(run_app)
-    except curses.error as e:
-        # This message will be visible if curses fails to initialize or during run_app if not caught inside
-        print(f"A curses error occurred: {e}")
-        print("Tips: Ensure your terminal is capable (e.g., not a dummy terminal).")
-        print("Try resizing your terminal window if it is too small.")
+        app = PyNvoiceApp()
+        app.run()
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     finally:
-        # curses.wrapper should handle restoring terminal state.
-        # This print is for after the application has finished or crashed.
         print("Application terminated.")
