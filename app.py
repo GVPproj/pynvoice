@@ -369,52 +369,7 @@ class ClientManagementScreen(Screen):
 class PyNvoiceApp(App):
     """Main PyNvoice application."""
 
-    CSS = """
-    .title {
-        text-style: bold;
-        color: $accent;
-        margin: 1;
-    }
-    
-    .field {
-        height: 3;
-        margin: 0 1;
-    }
-    
-    .buttons {
-        align: center middle;
-        margin: 1;
-    }
-    
-    .create-form {
-        width: 80;
-        margin: 1;
-        border: solid $primary;
-        padding: 1;
-    }
-    
-    .management-screen {
-        margin: 1;
-        padding: 1;
-    }
-    
-    .detail-view {
-        width: 80;
-        margin: 1;
-        border: solid $primary;
-        padding: 1;
-    }
-    
-    ListView {
-        height: 15;
-        border: solid $primary;
-        margin: 1 0;
-    }
-    
-    Button {
-        margin: 0 1;
-    }
-    """
+    CSS_PATH = "styles.css"
 
     BINDINGS = [
         Binding("q", "quit", "Quit Application"),
