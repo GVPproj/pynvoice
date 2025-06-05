@@ -841,7 +841,7 @@ class InvoiceManagementScreen(Screen):
         self.app.pop_screen()
 
 
-class PyNvoiceApp(App):
+class pynvoice(App):
     """Main PyNvoice application."""
 
     CSS_PATH = "styles.tcss"
@@ -902,7 +902,7 @@ if __name__ == "__main__":
     init_db()  # Initialize database schema if needed
 
     try:
-        app = PyNvoiceApp()
+        app = pynvoice()
         app.run()
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

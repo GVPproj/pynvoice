@@ -34,16 +34,17 @@
 
 #items-list {
   padding: 1;
+  overflow-y: scroll;
 }
 
 ListView {
-  height: 15;
-  border: solid $primary;
+  height: 10;
+  # border: solid $primary;
   margin: 1 0;
 }
 
 Button {
   width: 25;
-  
+  text-style: bold;
   # margin: 0 1;
 }
