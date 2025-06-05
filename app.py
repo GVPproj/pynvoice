@@ -12,6 +12,9 @@ from textual.widgets import (
     Input,
     Select,
 )
+from textual.theme import Theme
+
+
 from textual.screen import Screen
 from textual.binding import Binding
 from database import (
@@ -28,6 +31,26 @@ from database import (
     get_invoice_data,
 )
 from pdf_generator import generate_invoice_pdf
+
+arctic_theme = Theme(
+    name="arctic",
+    primary="#88C0D0",
+    secondary="#81A1C1",
+    accent="#B48EAD",
+    foreground="#D8DEE9",
+    background="#2E3440",
+    success="#A3BE8C",
+    warning="#EBCB8B",
+    error="#BF616A",
+    surface="#3B4252",
+    panel="#434C5E",
+    dark=True,
+    variables={
+        "block-cursor-text-style": "none",
+        "footer-key-foreground": "#88C0D0",
+        "input-selection-background": "#81a1c1 35%",
+    },
+)
 
 
 class CreateSenderScreen(Screen):
@@ -827,11 +850,18 @@ class PyNvoiceApp(App):
         Binding("q", "quit", "Quit Application"),
     ]
 
+    def on_mount(self) -> None:
+        # Register the theme
+        self.register_theme(arctic_theme)
+
+        # Set the app's theme
+        self.theme = "arctic"
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield Container(
-            Static("PyNvoice Main Menu", classes="title"),
-            Static("(Select an option below to continue)"),
+            Static("📄 pynvoice 📄", classes="title"),
+            Static(" (Tab or click on an option below to continue) "),
             Container(
                 Button(
                     "Invoice Management", variant="primary", id="invoice_management"

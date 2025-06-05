@@ -10,7 +10,6 @@
 }
 
 .buttons {
-  align: center middle;
   margin: 1;
 }
 
@@ -33,6 +32,10 @@
   padding: 1;
 }
 
+#items-list {
+  padding: 1;
+}
+
 ListView {
   height: 15;
   border: solid $primary;
@@ -40,5 +43,7 @@ ListView {
 }
 
 Button {
-  margin: 0 1;
+  width: 25;
+  
+  # margin: 0 1;
 }
