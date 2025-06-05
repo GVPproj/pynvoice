@@ -1,6 +1,6 @@
 import sqlite3
 from textual.app import App, ComposeResult
-from textual.containers import Container, Vertical, Horizontal
+from textual.containers import Container, Horizontal
 from textual.widgets import (
     Button,
     Header,
@@ -13,8 +13,6 @@ from textual.widgets import (
     Select,
 )
 from textual.theme import Theme
-
-
 from textual.screen import Screen
 from textual.binding import Binding
 from database import (
@@ -24,13 +22,14 @@ from database import (
     list_clients,
     list_footer_messages,
     create_client,
-    create_sender,
     create_footer_message,
     create_invoice,
     add_invoice_item,
     get_invoice_data,
 )
 from pdf_generator import generate_invoice_pdf
+
+from screens.create_sender_screen import CreateSenderScreen
 
 arctic_theme = Theme(
     name="arctic",
@@ -51,86 +50,6 @@ arctic_theme = Theme(
         "input-selection-background": "#81a1c1 35%",
     },
 )
-
-
-class CreateSenderScreen(Screen):
-    """Screen for creating a new sender."""
-
-    BINDINGS = [
-        Binding("escape", "cancel", "Cancel"),
-    ]
-
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Container(
-            Static("Create New Sender", classes="title"),
-            Static("Please enter the sender's details below:"),
-            Container(
-                Label("Name:"),
-                Input(placeholder="Enter sender name", id="name"),
-                classes="field",
-            ),
-            Container(
-                Label("Address:"),
-                Input(placeholder="Enter sender address", id="address"),
-                classes="field",
-            ),
-            Container(
-                Label("Email:"),
-                Input(placeholder="Enter sender email", id="email"),
-                classes="field",
-            ),
-            Container(
-                Label("Phone:"),
-                Input(placeholder="Enter sender phone", id="phone"),
-                classes="field",
-            ),
-            Horizontal(
-                Button("Create Sender", variant="primary", id="create"),
-                Button("Cancel", variant="default", id="cancel"),
-                classes="buttons",
-            ),
-            Static("", id="message"),
-            classes="create-form",
-        )
-        yield Footer()
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "create":
-            self.create_sender()
-        elif event.button.id == "cancel":
-            self.action_cancel()
-
-    def create_sender(self):
-        name = self.query_one("#name", Input).value.strip()
-        address = self.query_one("#address", Input).value.strip()
-        email = self.query_one("#email", Input).value.strip()
-        phone = self.query_one("#phone", Input).value.strip()
-
-        if not name:
-            self.query_one("#message", Static).update("Error: Sender name is required!")
-            return
-
-        try:
-            conn = sqlite3.connect(DB_FILE)
-            c = conn.cursor()
-            c.execute(
-                "INSERT INTO sender (name, address, email, phone) VALUES (?, ?, ?, ?)",
-                (name, address, email, phone),
-            )
-            conn.commit()
-            conn.close()
-            self.query_one("#message", Static).update("Sender created successfully!")
-            # Clear the form
-            self.query_one("#name", Input).value = ""
-            self.query_one("#address", Input).value = ""
-            self.query_one("#email", Input).value = ""
-            self.query_one("#phone", Input).value = ""
-        except sqlite3.Error as e:
-            self.query_one("#message", Static).update(f"Database error: {e}")
-
-    def action_cancel(self):
-        self.app.pop_screen()
 
 
 class CreateClientScreen(Screen):
