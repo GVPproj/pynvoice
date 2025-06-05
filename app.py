@@ -1,4 +1,3 @@
-import sqlite3
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import (
@@ -13,18 +12,10 @@ from database import (
     DB_FILE,
     init_db,
 )
-from pdf_generator import generate_invoice_pdf
 
-from screens.create_sender_screen import CreateSenderScreen
-from screens.create_client_screen import CreateClientScreen
-from screens.sender_detail_screen import SenderDetailScreen
-from screens.client_detail_screen import ClientDetailScreen
 from screens.sender_management_screen import SenderManagementScreen
 from screens.client_management_screen import ClientManagementScreen
-from screens.create_footer_message_screen import CreateFooterMessageScreen
 from screens.footer_message_management_screen import FooterMessageManagementScreen
-from screens.create_invoice_screen import CreateInvoiceScreen
-from screens.add_invoice_items_screen import AddInvoiceItemsScreen
 from screens.invoice_management_screen import InvoiceManagementScreen
 
 arctic_theme = Theme(
