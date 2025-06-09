@@ -50,14 +50,15 @@ Button {
   text-style: bold;
   # margin: 0 1;
 }
-Button:focus {
+Button:focus, Button:hover {
   background: $primary-darken-2;
+  text-style: italic bold;
 }
 
-#exit {
+#exit, #back {
   background: $panel-darken-2;
 }
 
-#exit:focus {
+#exit:focus, #back:focus {
   background: $panel-darken-3;
 }

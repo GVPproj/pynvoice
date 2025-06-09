@@ -49,7 +49,10 @@ class InvoiceManagementScreen(Screen):
         invoices = self.get_invoices()
         if invoices:
             for invoice_data in invoices:
-                display_text = f"Invoice #{invoice_data[0]} | Sender: {invoice_data[1]} | Client: {invoice_data[2]} | Date: {invoice_data[3]}"
+                date_str = invoice_data[3].split()[
+                    0
+                ]  # Split on space and take first part (date only)
+                display_text = f"Invoice #{invoice_data[0]} | Sender: {invoice_data[1]} | Client: {invoice_data[2]} | Date: {date_str}"
                 item = ListItem(Label(display_text))
                 item.invoice_data = invoice_data
                 invoice_list.append(item)
