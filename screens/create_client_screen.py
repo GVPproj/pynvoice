@@ -1,4 +1,3 @@
-import sqlite3
 from textual.app import ComposeResult
 from textual.screen import Screen
 from textual.binding import Binding
@@ -80,7 +79,7 @@ class CreateClientScreen(Screen):
             self.query_one("#email", Input).value = ""
         except ValueError as e:
             self.query_one("#message", Static).update(f"Validation error: {e}")
-        except sqlite3.Error as e:
+        except Exception as e:
             self.query_one("#message", Static).update(f"Database error: {e}")
 
     def action_cancel(self):

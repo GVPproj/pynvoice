@@ -1,5 +1,4 @@
-import sqlite3
-from database import DB_FILE
+from database import create_sender
 from textual.app import ComposeResult
 from textual.screen import Screen
 from textual.binding import Binding
@@ -64,30 +63,29 @@ class CreateSenderScreen(Screen):
 
     def create_sender(self):
         name = self.query_one("#name", Input).value.strip()
-        address = self.query_one("#address", Input).value.strip()
-        email = self.query_one("#email", Input).value.strip()
-        phone = self.query_one("#phone", Input).value.strip()
-
-        if not name:
-            self.query_one("#message", Static).update("Error: Sender name is required!")
-            return
+        address = self.query_one("#address", Input).value.strip() or None
+        email = self.query_one("#email", Input).value.strip() or None
+        phone = self.query_one("#phone", Input).value.strip() or None
 
         try:
-            conn = sqlite3.connect(DB_FILE)
-            c = conn.cursor()
-            c.execute(
-                "INSERT INTO sender (name, address, email, phone) VALUES (?, ?, ?, ?)",
-                (name, address, email, phone),
+            if not name:
+                self.query_one("#message", Static).update(
+                    "Error: Sender name is required!"
+                )
+                return
+
+            sender_id = create_sender(name, address, email, phone)
+            self.query_one("#message", Static).update(
+                f"Sender created successfully! (ID: {sender_id})"
             )
-            conn.commit()
-            conn.close()
-            self.query_one("#message", Static).update("Sender created successfully!")
             # Clear the form
             self.query_one("#name", Input).value = ""
             self.query_one("#address", Input).value = ""
             self.query_one("#email", Input).value = ""
             self.query_one("#phone", Input).value = ""
-        except sqlite3.Error as e:
+        except ValueError as e:
+            self.query_one("#message", Static).update(f"Validation error: {e}")
+        except Exception as e:
             self.query_one("#message", Static).update(f"Database error: {e}")
 
     def action_cancel(self):

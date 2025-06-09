@@ -1,4 +1,5 @@
 import sqlite3
+import uuid
 
 DB_FILE = "pynvoice.db"
 
@@ -9,7 +10,7 @@ def init_db():
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS sender (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             address TEXT,
             email TEXT,
@@ -20,7 +21,7 @@ def init_db():
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS client (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             address TEXT,
             email TEXT
@@ -39,8 +40,8 @@ def init_db():
         """
         CREATE TABLE IF NOT EXISTS invoice (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            sender_id INTEGER NOT NULL,
-            client_id INTEGER NOT NULL,
+            sender_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
             footer_message_id INTEGER,
             date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (sender_id) REFERENCES sender (id),
@@ -99,19 +100,20 @@ def create_client(name, address=None, email=None):
     if not name or not name.strip():
         raise ValueError("Client name is required")
 
+    client_id = str(uuid.uuid4())
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     try:
         c.execute(
-            "INSERT INTO client (name, address, email) VALUES (?, ?, ?)",
+            "INSERT INTO client (id, name, address, email) VALUES (?, ?, ?, ?)",
             (
+                client_id,
                 name.strip(),
                 address.strip() if address else None,
                 email.strip() if email else None,
             ),
         )
         conn.commit()
-        client_id = c.lastrowid
         return client_id
     finally:
         conn.close()
@@ -122,12 +124,14 @@ def create_sender(name, address=None, email=None, phone=None):
     if not name or not name.strip():
         raise ValueError("Sender name is required")
 
+    sender_id = str(uuid.uuid4())
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     try:
         c.execute(
-            "INSERT INTO sender (name, address, email, phone) VALUES (?, ?, ?, ?)",
+            "INSERT INTO sender (id, name, address, email, phone) VALUES (?, ?, ?, ?, ?)",
             (
+                sender_id,
                 name.strip(),
                 address.strip() if address else None,
                 email.strip() if email else None,
@@ -135,7 +139,6 @@ def create_sender(name, address=None, email=None, phone=None):
             ),
         )
         conn.commit()
-        sender_id = c.lastrowid
         return sender_id
     finally:
         conn.close()
