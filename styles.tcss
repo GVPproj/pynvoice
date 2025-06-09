@@ -9,7 +9,7 @@
   margin: 0 1;
 }
 
-.buttons {
+.buttons-container {
   margin: 1;
 }
 
@@ -44,7 +44,12 @@ ListView {
 }
 
 Button {
-  width: 25;
+  width: 23;
   text-style: bold;
   # margin: 0 1;
+}
+# can use darken and lighten up to 3 levels
+# need to make specific variables so Exit button is not affected
+Button:focus {
+  background: $primary-darken-2;
 }

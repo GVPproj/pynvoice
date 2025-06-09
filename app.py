@@ -68,7 +68,7 @@ class pynvoice(App):
                 Button("Client Management", variant="primary", id="client_management"),
                 Button("Footer Messages", variant="primary", id="footer_management"),
                 Button("Exit Application", variant="default", id="exit"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             classes="main-menu",
         )

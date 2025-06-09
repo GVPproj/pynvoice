@@ -31,7 +31,7 @@ class SenderManagementScreen(Screen):
             Horizontal(
                 Button("Create New Sender", variant="primary", id="create"),
                 Button("Back to Main Menu", variant="default", id="back"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             ListView(id="sender-list"),
             classes="management-screen",

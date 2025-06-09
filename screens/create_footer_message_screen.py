@@ -33,7 +33,7 @@ class CreateFooterMessageScreen(Screen):
             Horizontal(
                 Button("Create Message", variant="primary", id="create"),
                 Button("Cancel", variant="default", id="cancel"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             Static("", id="status"),
             classes="create-form",

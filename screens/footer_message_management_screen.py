@@ -30,7 +30,7 @@ class FooterMessageManagementScreen(Screen):
             Horizontal(
                 Button("Create New Message", variant="primary", id="create"),
                 Button("Back to Main Menu", variant="default", id="back"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             ListView(id="footer-list"),
             classes="management-screen",

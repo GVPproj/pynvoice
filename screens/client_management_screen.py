@@ -31,7 +31,7 @@ class ClientManagementScreen(Screen):
             Horizontal(
                 Button("Create New Client", variant="primary", id="create"),
                 Button("Back to Main Menu", variant="default", id="back"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             ListView(id="client-list"),
             classes="management-screen",

@@ -51,7 +51,7 @@ class AddInvoiceItemsScreen(Screen):
                 Button("Add Item", variant="primary", id="add_item"),
                 Button("Finish & Generate PDF", variant="success", id="finish"),
                 Button("Cancel", variant="default", id="cancel"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             Static("", id="status"),
             Static("Items added:", classes="section-title"),

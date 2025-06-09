@@ -32,7 +32,7 @@ class InvoiceManagementScreen(Screen):
             Horizontal(
                 Button("Create New Invoice", variant="primary", id="create"),
                 Button("Back to Main Menu", variant="default", id="back"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             ListView(id="invoice-list"),
             classes="management-screen",

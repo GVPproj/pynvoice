@@ -45,7 +45,7 @@ class CreateClientScreen(Screen):
             Horizontal(
                 Button("Create Client", variant="primary", id="create"),
                 Button("Cancel", variant="default", id="cancel"),
-                classes="buttons",
+                classes="buttons-container",
             ),
             Static("", id="message"),
             classes="create-form",
