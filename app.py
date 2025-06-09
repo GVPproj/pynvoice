@@ -50,10 +50,10 @@ class pynvoice(App):
 
     def on_mount(self) -> None:
         # Register the theme
-        self.register_theme(arctic_theme)
+        # self.register_theme(arctic_theme)
 
         # Set the app's theme
-        self.theme = "arctic"
+        self.theme = "tokyo-night"
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -67,7 +67,12 @@ class pynvoice(App):
                 Button("Sender Management", variant="primary", id="sender_management"),
                 Button("Client Management", variant="primary", id="client_management"),
                 Button("Footer Messages", variant="primary", id="footer_management"),
-                Button("Exit Application", variant="default", id="exit"),
+                Button(
+                    "Exit Application",
+                    variant="default",
+                    id="exit",
+                    classes="defaultBtn",
+                ),
                 classes="buttons-container",
             ),
             classes="main-menu",
