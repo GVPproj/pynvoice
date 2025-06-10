@@ -65,7 +65,7 @@ class pynvoice(App):
                 Horizontal(
                     Button("Senders", variant="primary", id="sender_management"),
                     Button("Clients", variant="primary", id="client_management"),
-                    Button("Footers", variant="primary", id="footer_management"),
+                    Button("Messages", variant="primary", id="footer_management"),
                 ),
                 Button(
                     "Exit",

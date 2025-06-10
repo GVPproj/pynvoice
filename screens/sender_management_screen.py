@@ -25,7 +25,7 @@ class SenderManagementScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Container(
-            Static("Sender Management", classes="title"),
+            Static("Add or Edit Senders", classes="title"),
             Horizontal(
                 Button("New Sender", variant="primary", id="create"),
                 Button("Back", variant="default", id="back"),

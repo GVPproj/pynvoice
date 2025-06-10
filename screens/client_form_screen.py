@@ -13,7 +13,7 @@ from textual.containers import Container, Horizontal
 from database import create_client, update_client
 
 
-class EditClientScreen(Screen):
+class ClientFormScreen(Screen):
     """Screen for creating or editing a client."""
 
     BINDINGS = [

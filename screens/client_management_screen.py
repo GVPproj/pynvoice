@@ -12,7 +12,7 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_clients
-from screens.edit_client_screen import EditClientScreen
+from screens.client_form_screen import ClientFormScreen
 
 
 class ClientManagementScreen(Screen):
@@ -25,7 +25,7 @@ class ClientManagementScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Container(
-            Static("Client Management", classes="title"),
+            Static("Add or Edit Clients", classes="title"),
             Horizontal(
                 Button("New Client", variant="primary", id="create"),
                 Button("Back", variant="default", id="back"),
@@ -57,11 +57,11 @@ class ClientManagementScreen(Screen):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if hasattr(event.item, "client_data"):
-            self.app.push_screen(EditClientScreen(event.item.client_data))
+            self.app.push_screen(ClientFormScreen(event.item.client_data))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(EditClientScreen())
+            self.app.push_screen(ClientFormScreen())
         elif event.button.id == "back":
             self.action_back()
 

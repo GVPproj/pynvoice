@@ -25,7 +25,7 @@ class FooterMessageManagementScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Container(
-            Static("Footer Message Management", classes="title"),
+            Static("Add or Edit Invoice Footer Messages", classes="title"),
             Horizontal(
                 Button("New Message", variant="primary", id="create"),
                 Button("Back", variant="default", id="back"),
