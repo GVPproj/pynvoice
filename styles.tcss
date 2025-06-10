@@ -21,8 +21,8 @@
 }
 
 .management-screen {
-  margin: 1;
-  padding: 1;
+  # margin: 0 1;
+  # padding: 1;
 }
 
 .detail-view {

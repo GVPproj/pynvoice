@@ -27,7 +27,7 @@ class SenderManagementScreen(Screen):
         yield Header()
         yield Container(
             Static("Sender Management", classes="title"),
-            Static("(Select a sender to view details, or create a new one)"),
+            Static(" (Select a sender to view details, or create a new one) "),
             Horizontal(
                 Button("Create New Sender", variant="primary", id="create"),
                 Button("Back to Main Menu", variant="default", id="back"),
