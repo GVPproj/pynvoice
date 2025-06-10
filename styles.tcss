@@ -4,7 +4,6 @@
 
 ListView {
   height: 10;
-  # border: solid $primary;
   margin: 1;
 }
 
@@ -27,11 +26,11 @@ Button:focus, Button:hover {
   overflow-y: scroll;
 }
 
-#exit, #back {
+#exit, #back, #cancel {
   background: $panel-darken-2;
 }
 
-#exit:focus, #back:focus {
+#exit:focus, #back:focus, #cancel:focus {
   background: $panel-darken-3;
 }
 
@@ -54,22 +53,9 @@ Button:focus, Button:hover {
   margin: 1;
 }
 
-.create-form {
-  width: 80;
-  margin: 1;
-  border: solid $primary;
-  padding: 1;
-}
+# .create-form {
+#   margin: 1;
+# }
 
-.management-screen {
-  # margin: 0 1;
-  # padding: 1;
-}
 
-.detail-view {
-  width: 80;
-  margin: 1;
-  border: solid $primary;
-  padding: 1;
-}
 

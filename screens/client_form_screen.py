@@ -30,10 +30,8 @@ class ClientFormScreen(Screen):
         yield Header()
         yield Container(
             Static(title, classes="title"),
-            Static("Please enter the client's details below:"),
-            Static("(Name is required, Address and Email are optional)"),
             Container(
-                Label("Name *:"),
+                Label("Name *required:"),
                 Input(placeholder="Enter client name", id="name"),
                 classes="field",
             ),
@@ -53,7 +51,7 @@ class ClientFormScreen(Screen):
                     variant="primary",
                     id="save",
                 ),
-                Button("Cancel", variant="default", id="cancel"),
+                Button("Back", variant="default", id="cancel"),
                 classes="buttons-container",
             ),
             Static("", id="message"),

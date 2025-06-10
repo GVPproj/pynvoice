@@ -30,7 +30,6 @@ class SenderFormScreen(Screen):
         yield Header()
         yield Container(
             Static(title, classes="title"),
-            Static("Please enter the sender's information below:"),
             Container(
                 Label("Name:"),
                 Input(placeholder="Enter sender name", id="name"),
@@ -57,7 +56,7 @@ class SenderFormScreen(Screen):
                     variant="primary",
                     id="save",
                 ),
-                Button("Cancel", variant="default", id="cancel"),
+                Button("Back", variant="default", id="cancel"),
                 classes="buttons-container",
             ),
             Static("", id="message"),

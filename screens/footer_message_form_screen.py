@@ -32,7 +32,6 @@ class FooterMessageFormScreen(Screen):
         yield Header()
         yield Container(
             Static(title, classes="title"),
-            Static("Please enter the footer message text below:"),
             Container(
                 Label("Message:"),
                 Input(placeholder="Enter footer message", id="message"),
@@ -44,7 +43,7 @@ class FooterMessageFormScreen(Screen):
                     variant="primary",
                     id="save",
                 ),
-                Button("Cancel", variant="default", id="cancel"),
+                Button("Back", variant="default", id="cancel"),
                 classes="buttons-container",
             ),
             Static("", id="status"),
