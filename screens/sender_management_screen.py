@@ -12,7 +12,7 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_senders
-from screens.edit_sender_screen import EditSenderScreen
+from screens.sender_form_screen import SenderFormScreen
 
 
 class SenderManagementScreen(Screen):
@@ -55,11 +55,11 @@ class SenderManagementScreen(Screen):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if hasattr(event.item, "sender_data"):
-            self.app.push_screen(EditSenderScreen(event.item.sender_data))
+            self.app.push_screen(SenderFormScreen(event.item.sender_data))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(EditSenderScreen())
+            self.app.push_screen(SenderFormScreen())
         elif event.button.id == "back":
             self.action_back()
 

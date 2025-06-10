@@ -13,7 +13,7 @@ from textual.containers import Container, Horizontal
 from database import create_footer_message, update_footer_message
 
 
-class EditFooterMessageScreen(Screen):
+class FooterMessageFormScreen(Screen):
     """Screen for creating or editing a footer message."""
 
     BINDINGS = [

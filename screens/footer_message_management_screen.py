@@ -12,7 +12,7 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_footer_messages
-from screens.edit_footer_message_screen import EditFooterMessageScreen
+from screens.footer_message_form_screen import FooterMessageFormScreen
 
 
 class FooterMessageManagementScreen(Screen):
@@ -65,11 +65,11 @@ class FooterMessageManagementScreen(Screen):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if hasattr(event.item, "footer_data"):
-            self.app.push_screen(EditFooterMessageScreen(event.item.footer_data))
+            self.app.push_screen(FooterMessageFormScreen(event.item.footer_data))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(EditFooterMessageScreen())
+            self.app.push_screen(FooterMessageFormScreen())
         elif event.button.id == "back":
             self.action_back()
 
