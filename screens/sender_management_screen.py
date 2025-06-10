@@ -48,7 +48,7 @@ class SenderManagementScreen(Screen):
         senders = list_senders()
         if senders:
             for sender_data in senders:
-                display_text = f"{sender_data[1]} (ID: {sender_data[0]}) | Addr: {sender_data[2]} | Email: {sender_data[3]} | Phone: {sender_data[4]}"
+                display_text = f"{sender_data[1]} | {sender_data[2] or 'No Address'} | {sender_data[3] or 'No Email'} | {sender_data[4] or 'No Phone'}"
                 item = ListItem(Label(display_text))
                 item.sender_data = sender_data
                 sender_list.append(item)

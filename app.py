@@ -62,11 +62,11 @@ class pynvoice(App):
             Static(" (Tab or click on an option below to continue) "),
             Container(
                 Button("Invoices", variant="primary", id="invoice_management"),
-                Button("Sender Management", variant="primary", id="sender_management"),
-                Button("Client Management", variant="primary", id="client_management"),
-                Button("Footer Messages", variant="primary", id="footer_management"),
+                Button("Senders", variant="primary", id="sender_management"),
+                Button("Clients", variant="primary", id="client_management"),
+                Button("Footers", variant="primary", id="footer_management"),
                 Button(
-                    "Exit Application",
+                    "Exit",
                     variant="default",
                     id="exit",
                     classes="defaultBtn",
