@@ -163,6 +163,77 @@ def create_footer_message(message):
         conn.close()
 
 
+def update_client(client_id, name, address=None, email=None):
+    """Update an existing client"""
+    if not name or not name.strip():
+        raise ValueError("Client name is required")
+
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        c.execute(
+            "UPDATE client SET name = ?, address = ?, email = ? WHERE id = ?",
+            (
+                name.strip(),
+                address.strip() if address else None,
+                email.strip() if email else None,
+                client_id,
+            ),
+        )
+        conn.commit()
+        if c.rowcount == 0:
+            raise ValueError(f"Client with ID {client_id} not found")
+        return client_id
+    finally:
+        conn.close()
+
+
+def update_sender(sender_id, name, address=None, email=None, phone=None):
+    """Update an existing sender"""
+    if not name or not name.strip():
+        raise ValueError("Sender name is required")
+
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        c.execute(
+            "UPDATE sender SET name = ?, address = ?, email = ?, phone = ? WHERE id = ?",
+            (
+                name.strip(),
+                address.strip() if address else None,
+                email.strip() if email else None,
+                phone.strip() if phone else None,
+                sender_id,
+            ),
+        )
+        conn.commit()
+        if c.rowcount == 0:
+            raise ValueError(f"Sender with ID {sender_id} not found")
+        return sender_id
+    finally:
+        conn.close()
+
+
+def update_footer_message(footer_id, message):
+    """Update an existing footer message"""
+    if not message or not message.strip():
+        raise ValueError("Footer message is required")
+
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        c.execute(
+            "UPDATE footer_message SET message = ? WHERE id = ?",
+            (message.strip(), footer_id),
+        )
+        conn.commit()
+        if c.rowcount == 0:
+            raise ValueError(f"Footer message with ID {footer_id} not found")
+        return footer_id
+    finally:
+        conn.close()
+
+
 def create_invoice(sender_id, client_id, footer_message_id=None):
     """Create a new invoice"""
     conn = sqlite3.connect(DB_FILE)

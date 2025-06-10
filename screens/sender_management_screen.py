@@ -12,8 +12,7 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_senders
-from screens.create_sender_screen import CreateSenderScreen
-from screens.sender_detail_screen import SenderDetailScreen
+from screens.edit_sender_screen import EditSenderScreen
 
 
 class SenderManagementScreen(Screen):
@@ -27,7 +26,6 @@ class SenderManagementScreen(Screen):
         yield Header()
         yield Container(
             Static("Sender Management", classes="title"),
-            Static(" (Select a sender to view details, or create a new one) "),
             Horizontal(
                 Button("New Sender", variant="primary", id="create"),
                 Button("Back", variant="default", id="back"),
@@ -57,11 +55,11 @@ class SenderManagementScreen(Screen):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if hasattr(event.item, "sender_data"):
-            self.app.push_screen(SenderDetailScreen(event.item.sender_data))
+            self.app.push_screen(EditSenderScreen(event.item.sender_data))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(CreateSenderScreen())
+            self.app.push_screen(EditSenderScreen())
         elif event.button.id == "back":
             self.action_back()
 

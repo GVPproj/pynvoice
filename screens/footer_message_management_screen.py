@@ -12,7 +12,7 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_footer_messages
-from screens.create_footer_message_screen import CreateFooterMessageScreen
+from screens.edit_footer_message_screen import EditFooterMessageScreen
 
 
 class FooterMessageManagementScreen(Screen):
@@ -26,7 +26,6 @@ class FooterMessageManagementScreen(Screen):
         yield Header()
         yield Container(
             Static("Footer Message Management", classes="title"),
-            Static("(Manage footer messages for invoices)"),
             Horizontal(
                 Button("New Message", variant="primary", id="create"),
                 Button("Back", variant="default", id="back"),
@@ -64,9 +63,13 @@ class FooterMessageManagementScreen(Screen):
         """Get all footer messages from database"""
         return list_footer_messages()
 
+    def on_list_view_selected(self, event: ListView.Selected) -> None:
+        if hasattr(event.item, "footer_data"):
+            self.app.push_screen(EditFooterMessageScreen(event.item.footer_data))
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(CreateFooterMessageScreen())
+            self.app.push_screen(EditFooterMessageScreen())
         elif event.button.id == "back":
             self.action_back()
 
