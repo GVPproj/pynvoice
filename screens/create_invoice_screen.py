@@ -54,7 +54,7 @@ class CreateInvoiceScreen(Screen):
             ),
             Horizontal(
                 Button("Create Invoice", variant="primary", id="create"),
-                Button("Cancel", variant="default", id="cancel"),
+                Button("Back", variant="default", id="cancel"),
                 classes="buttons-container",
             ),
             Static("", id="status"),

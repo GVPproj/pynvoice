@@ -50,7 +50,7 @@ class AddInvoiceItemsScreen(Screen):
             Horizontal(
                 Button("Add Item", variant="primary", id="add_item"),
                 Button("Generate PDF", variant="success", id="finish"),
-                Button("Cancel", variant="default", id="cancel"),
+                Button("Back", variant="default", id="cancel"),
                 classes="buttons-container",
             ),
             Static("", id="status"),

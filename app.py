@@ -35,7 +35,14 @@ class pynvoice(App):
         yield Header()
         yield Container(
             Static("📄 pynvoice 📄", classes="title"),
-            Static(" (Tab or click on an option below to continue) "),
+            Static(
+                "Tab or click on an option below. You might need to make your terminal window a bit bigger to enjoy the full experience.",
+                classes="subtitle",
+            ),
+            Static(
+                "To create invoices, you'll need at least one sender, and one client.",
+                classes="subtitle",
+            ),
             Container(
                 Button("📄 Invoices", id="invoice_management", classes="menu-option"),
                 Button("👤 Senders", id="sender_management", classes="menu-option"),
@@ -98,4 +105,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     finally:
-        print("Application terminated.")
+        print("I hope you enjoyed your pynvoice session.  Take care!")
