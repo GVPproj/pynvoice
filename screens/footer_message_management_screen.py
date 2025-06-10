@@ -28,8 +28,8 @@ class FooterMessageManagementScreen(Screen):
             Static("Footer Message Management", classes="title"),
             Static("(Manage footer messages for invoices)"),
             Horizontal(
-                Button("Create New Message", variant="primary", id="create"),
-                Button("Back to Main Menu", variant="default", id="back"),
+                Button("New Message", variant="primary", id="create"),
+                Button("Back", variant="default", id="back"),
                 classes="buttons-container",
             ),
             ListView(id="footer-list"),
@@ -53,7 +53,7 @@ class FooterMessageManagementScreen(Screen):
                     if len(footer_data[1]) > 50
                     else footer_data[1]
                 )
-                display_text = f"ID: {footer_data[0]} | {truncated_message}"
+                display_text = f"{footer_data[0]} | {truncated_message}"
                 item = ListItem(Label(display_text))
                 item.footer_data = footer_data
                 footer_list.append(item)

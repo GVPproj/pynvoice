@@ -29,8 +29,8 @@ class ClientManagementScreen(Screen):
             Static("Client Management", classes="title"),
             Static("(Select a client to view details, or create a new one)"),
             Horizontal(
-                Button("Create New Client", variant="primary", id="create"),
-                Button("Back to Main Menu", variant="default", id="back"),
+                Button("New Client", variant="primary", id="create"),
+                Button("Back", variant="default", id="back"),
                 classes="buttons-container",
             ),
             ListView(id="client-list"),

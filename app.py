@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import Container, Horizontal
 from textual.widgets import (
     Button,
     Header,
@@ -62,9 +62,11 @@ class pynvoice(App):
             Static(" (Tab or click on an option below to continue) "),
             Container(
                 Button("Invoices", variant="primary", id="invoice_management"),
-                Button("Senders", variant="primary", id="sender_management"),
-                Button("Clients", variant="primary", id="client_management"),
-                Button("Footers", variant="primary", id="footer_management"),
+                Horizontal(
+                    Button("Senders", variant="primary", id="sender_management"),
+                    Button("Clients", variant="primary", id="client_management"),
+                    Button("Footers", variant="primary", id="footer_management"),
+                ),
                 Button(
                     "Exit",
                     variant="default",

@@ -29,8 +29,8 @@ class SenderManagementScreen(Screen):
             Static("Sender Management", classes="title"),
             Static(" (Select a sender to view details, or create a new one) "),
             Horizontal(
-                Button("Create New Sender", variant="primary", id="create"),
-                Button("Back to Main Menu", variant="default", id="back"),
+                Button("New Sender", variant="primary", id="create"),
+                Button("Back", variant="default", id="back"),
                 classes="buttons-container",
             ),
             ListView(id="sender-list"),

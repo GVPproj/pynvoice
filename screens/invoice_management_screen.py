@@ -30,8 +30,8 @@ class InvoiceManagementScreen(Screen):
             Static("Invoice Management", classes="title"),
             Static("(Create and manage invoices)"),
             Horizontal(
-                Button("Create New Invoice", variant="primary", id="create"),
-                Button("Back to Main Menu", variant="default", id="back"),
+                Button("New Invoice", variant="primary", id="create"),
+                Button("Back", variant="default", id="back"),
                 classes="buttons-container",
             ),
             ListView(id="invoice-list"),
