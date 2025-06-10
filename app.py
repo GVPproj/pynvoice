@@ -18,26 +18,6 @@ from screens.client_management_screen import ClientManagementScreen
 from screens.footer_message_management_screen import FooterMessageManagementScreen
 from screens.invoice_management_screen import InvoiceManagementScreen
 
-arctic_theme = Theme(
-    name="arctic",
-    primary="#88C0D0",
-    secondary="#81A1C1",
-    accent="#B48EAD",
-    foreground="#D8DEE9",
-    background="#2E3440",
-    success="#A3BE8C",
-    warning="#EBCB8B",
-    error="#BF616A",
-    surface="#3B4252",
-    panel="#434C5E",
-    dark=True,
-    variables={
-        "block-cursor-text-style": "none",
-        "footer-key-foreground": "#88C0D0",
-        "input-selection-background": "#81a1c1 35%",
-    },
-)
-
 
 class pynvoice(App):
     """Main PyNvoice application."""
@@ -49,10 +29,6 @@ class pynvoice(App):
     ]
 
     def on_mount(self) -> None:
-        # Register the theme
-        # self.register_theme(arctic_theme)
-
-        # Set the app's theme
         self.theme = "tokyo-night"
 
     def compose(self) -> ComposeResult:
@@ -61,25 +37,23 @@ class pynvoice(App):
             Static("📄 pynvoice 📄", classes="title"),
             Static(" (Tab or click on an option below to continue) "),
             Container(
-                Button("Invoices", variant="primary", id="invoice_management"),
-                Horizontal(
-                    Button("Senders", variant="primary", id="sender_management"),
-                    Button("Clients", variant="primary", id="client_management"),
-                    Button("Messages", variant="primary", id="footer_management"),
-                ),
+                Button("📄 Invoices", id="invoice_management", classes="menu-option"),
+                Button("👤 Senders", id="sender_management", classes="menu-option"),
+                Button("🏢 Clients", id="client_management", classes="menu-option"),
+                Button("💬 Messages", id="footer_management", classes="menu-option"),
                 Button(
-                    "Exit",
-                    variant="default",
+                    "🚪 Exit",
                     id="exit",
-                    classes="defaultBtn",
+                    classes="menu-option exit-option",
                 ),
-                classes="buttons-container",
+                # classes="buttons-container",
             ),
             classes="main-menu",
         )
         yield Footer()
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event) -> None:
+        """Handle button presses on menu options."""
         if event.button.id == "invoice_management":
             self.push_screen(InvoiceManagementScreen())
         elif event.button.id == "sender_management":
@@ -90,6 +64,20 @@ class pynvoice(App):
             self.push_screen(FooterMessageManagementScreen())
         elif event.button.id == "exit":
             self.exit()
+
+    def on_click(self, event) -> None:
+        """Handle mouse clicks on menu options (fallback for any remaining static elements)."""
+        if hasattr(event.widget, "id"):
+            if event.widget.id == "invoice_management":
+                self.push_screen(InvoiceManagementScreen())
+            elif event.widget.id == "sender_management":
+                self.push_screen(SenderManagementScreen())
+            elif event.widget.id == "client_management":
+                self.push_screen(ClientManagementScreen())
+            elif event.widget.id == "footer_management":
+                self.push_screen(FooterMessageManagementScreen())
+            elif event.widget.id == "exit":
+                self.exit()
 
     def action_quit(self):
         self.exit()

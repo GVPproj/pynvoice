@@ -10,7 +10,8 @@ ListView {
 Button {
   width: 15;
   text-style: bold;
-  # margin: 0 1;
+  # margin: 0;
+  # padding: 0;
 }
 Button:focus, Button:hover {
   background: $primary-darken-2;
@@ -56,6 +57,41 @@ Button:focus, Button:hover {
 # .create-form {
 #   margin: 1;
 # }
+
+/* Menu Option Buttons */
+.menu-option {
+  # width: 100%;
+  height: 1;
+  margin: 1;
+  text-align: left;
+  background: $surface;
+  border: none;
+}
+
+.menu-option:focus {
+  background: $primary;
+  text-style: bold;
+  color: $text;
+}
+
+.menu-option:hover {
+  background: $primary-darken-1;
+  text-style: bold;
+}
+
+.exit-option {
+  background: $error-darken-1;
+}
+
+.exit-option:focus {
+  background: $error;
+  text-style: bold;
+}
+
+.exit-option:hover {
+  background: $error-lighten-1;
+  text-style: bold;
+}
 
 
 
