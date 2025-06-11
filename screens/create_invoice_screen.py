@@ -110,7 +110,8 @@ class CreateInvoiceScreen(Screen):
             return
 
         try:
-            invoice_id = create_invoice(sender_id, client_id, footer_id)
+            # Pass paid=False as default for new invoices created through this screen
+            invoice_id = create_invoice(sender_id, client_id, footer_id, paid=False)
             self.query_one("#status", Static).update(
                 f"Invoice created successfully! (ID: {invoice_id})"
             )

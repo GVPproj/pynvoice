@@ -2,8 +2,6 @@
  Native Textual Components
 */
 
-
-
 ListView {
   height: 10;
   margin: 1;
@@ -41,6 +39,10 @@ Input {
   background: $panel-darken-3;
 }
 
+# paid_switch {
+#   margin-left: 1;
+# }
+
 /*
  Custom Classes
 */
@@ -67,8 +69,6 @@ Input {
 .buttons-container {
   margin: 1;
 }
-
-
 
 /* Menu Option Buttons */
 .menu-option {

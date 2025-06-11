@@ -43,6 +43,7 @@ def init_db():
             sender_id TEXT NOT NULL,
             client_id TEXT NOT NULL,
             footer_message_id INTEGER,
+            paid BOOLEAN DEFAULT FALSE,
             date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (sender_id) REFERENCES sender (id),
             FOREIGN KEY (client_id) REFERENCES client (id),
@@ -50,6 +51,14 @@ def init_db():
         )
     """
     )
+
+    # Add paid column to existing tables if it doesn't exist
+    try:
+        c.execute("ALTER TABLE invoice ADD COLUMN paid BOOLEAN DEFAULT FALSE")
+    except sqlite3.OperationalError:
+        # Column already exists
+        pass
+
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS invoice_item (
@@ -93,6 +102,29 @@ def list_footer_messages():
     messages = c.fetchall()
     conn.close()
     return messages
+
+
+def list_invoices():
+    """List all invoices with their basic information including paid status"""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute(
+        """
+        SELECT 
+            i.id,
+            s.name as sender_name,
+            c.name as client_name,
+            i.date_created,
+            i.paid
+        FROM invoice i
+        LEFT JOIN sender s ON i.sender_id = s.id
+        LEFT JOIN client c ON i.client_id = c.id
+        ORDER BY i.date_created DESC
+    """
+    )
+    invoices = c.fetchall()
+    conn.close()
+    return invoices
 
 
 def create_client(name, address=None, email=None):
@@ -234,17 +266,36 @@ def update_footer_message(footer_id, message):
         conn.close()
 
 
-def create_invoice(sender_id, client_id, footer_message_id=None):
+def create_invoice(sender_id, client_id, footer_message_id=None, paid=False):
     """Create a new invoice"""
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     try:
         c.execute(
-            "INSERT INTO invoice (sender_id, client_id, footer_message_id) VALUES (?, ?, ?)",
-            (sender_id, client_id, footer_message_id),
+            "INSERT INTO invoice (sender_id, client_id, footer_message_id, paid) VALUES (?, ?, ?, ?)",
+            (sender_id, client_id, footer_message_id, paid),
         )
         conn.commit()
         invoice_id = c.lastrowid
+        return invoice_id
+    finally:
+        conn.close()
+
+
+def update_invoice(
+    invoice_id, sender_id, client_id, footer_message_id=None, paid=False
+):
+    """Update an existing invoice"""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        c.execute(
+            "UPDATE invoice SET sender_id = ?, client_id = ?, footer_message_id = ?, paid = ? WHERE id = ?",
+            (sender_id, client_id, footer_message_id, paid, invoice_id),
+        )
+        conn.commit()
+        if c.rowcount == 0:
+            raise ValueError(f"Invoice with ID {invoice_id} not found")
         return invoice_id
     finally:
         conn.close()
@@ -284,9 +335,13 @@ def get_invoice_data(invoice_id):
         SELECT 
             i.id as invoice_id,
             i.date_created,
+            i.paid,
             s.name as sender_name, s.address as sender_address, s.email as sender_email, s.phone as sender_phone,
             c.name as client_name, c.address as client_address, c.email as client_email,
-            f.message as footer_message
+            f.message as footer_message,
+            i.sender_id,
+            i.client_id,
+            i.footer_message_id
         FROM invoice i
         LEFT JOIN sender s ON i.sender_id = s.id
         LEFT JOIN client c ON i.client_id = c.id

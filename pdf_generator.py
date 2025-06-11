@@ -22,10 +22,13 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
     if not invoice_data:
         raise ValueError(f"Invoice with ID {invoice_id} not found")
 
-    # Extract data from database result
+    # Extract data from database result - updated structure includes paid field
+    # Structure: (invoice_id, date_created, paid, sender_name, sender_address, sender_email, sender_phone,
+    #            client_name, client_address, client_email, footer_message, sender_id, client_id, footer_message_id)
     (
         invoice_id,
         date_created,
+        paid,
         sender_name,
         sender_address,
         sender_email,
@@ -34,6 +37,9 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
         client_address,
         client_email,
         footer_message,
+        sender_id,
+        client_id,
+        footer_message_id,
     ) = invoice_data
 
     # Set up output filename
