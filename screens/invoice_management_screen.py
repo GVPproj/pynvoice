@@ -14,7 +14,7 @@ from textual.widgets import (
 from textual.containers import Container, Horizontal
 from database import list_invoices, get_invoice_data
 from screens.invoice_form_screen import InvoiceFormScreen
-from screens.add_invoice_items_screen import AddInvoiceItemsScreen
+from screens.invoice_items_screen import AddInvoiceItemsScreen
 
 
 class InvoiceManagementScreen(Screen):
