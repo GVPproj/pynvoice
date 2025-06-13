@@ -1,4 +1,3 @@
-import sqlite3
 from textual.app import ComposeResult
 from textual.screen import Screen
 from textual.binding import Binding
@@ -27,6 +26,7 @@ class InvoiceManagementScreen(Screen):
     def __init__(self):
         super().__init__()
         self.selected_invoice_id = None
+        self.invoice_map = {}  # Maps ListItem index to invoice_id
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -53,10 +53,11 @@ class InvoiceManagementScreen(Screen):
     def refresh_invoices(self):
         invoice_list = self.query_one("#invoice-list", ListView)
         invoice_list.clear()
+        self.invoice_map.clear()
 
         invoices = list_invoices()
         if invoices:
-            for invoice_data in invoices:
+            for index, invoice_data in enumerate(invoices):
                 # invoice_data: (id, sender_name, client_name, date_created, paid)
                 invoice_id, sender_name, client_name, date_created, paid = invoice_data
                 date_str = (
@@ -65,14 +66,16 @@ class InvoiceManagementScreen(Screen):
                 paid_status = "✓ PAID" if paid else "○ UNPAID"
                 display_text = f"Invoice #{invoice_id} | {sender_name} → {client_name} | {date_str} | {paid_status}"
                 item = ListItem(Label(display_text))
-                item.invoice_id = invoice_id
                 invoice_list.append(item)
+                self.invoice_map[index] = invoice_id
         else:
             invoice_list.append(ListItem(Label("No invoices found.")))
 
-    def on_list_view_selected(self, event: ListView.Selected) -> None:
-        if hasattr(event.item, "invoice_id"):
-            self.selected_invoice_id = event.item.invoice_id
+    def on_list_view_selected(self) -> None:
+        invoice_list = self.query_one("#invoice-list", ListView)
+        selected_index = invoice_list.index
+        if selected_index is not None and selected_index in self.invoice_map:
+            self.selected_invoice_id = self.invoice_map[selected_index]
             # Enable the action buttons when an invoice is selected
             self.query_one("#edit", Button).disabled = False
             self.query_one("#view_items", Button).disabled = False

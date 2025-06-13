@@ -40,15 +40,18 @@ class SenderFormScreen(Screen):
                 Input(placeholder="Enter sender address", id="address"),
                 classes="field",
             ),
-            Container(
-                Label("Email:"),
-                Input(placeholder="Enter sender email", id="email"),
-                classes="field",
-            ),
-            Container(
-                Label("Phone:"),
-                Input(placeholder="Enter sender phone", id="phone"),
-                classes="field",
+            Horizontal(
+                Container(
+                    Label("Email:"),
+                    Input(placeholder="Enter sender email", id="email"),
+                    classes="field half-width",
+                ),
+                Container(
+                    Label("Phone:"),
+                    Input(placeholder="Enter sender phone", id="phone"),
+                    classes="field half-width",
+                ),
+                classes="horizontal-fields",
             ),
             Horizontal(
                 Button(

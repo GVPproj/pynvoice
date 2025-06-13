@@ -39,9 +39,7 @@ Input {
   background: $panel-darken-3;
 }
 
-# paid_switch {
-#   margin-left: 1;
-# }
+
 
 /*
  Custom Classes
@@ -63,7 +61,7 @@ Input {
 
 .field {
   height: 4;
-  margin: 1;
+  margin: 1 1 0 1;
 }
 
 .buttons-container {
