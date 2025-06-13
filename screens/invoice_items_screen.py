@@ -37,15 +37,18 @@ class AddInvoiceItemsScreen(Screen):
                 Input(placeholder="Enter item name", id="item_name"),
                 classes="field",
             ),
-            Container(
-                Label("Quantity:"),
-                Input(placeholder="Enter quantity", id="amount"),
-                classes="field",
-            ),
-            Container(
-                Label("Cost per Unit:"),
-                Input(placeholder="Enter cost per unit", id="cost_per_unit"),
-                classes="field",
+            Horizontal(
+                Container(
+                    Label("Quantity:"),
+                    Input(placeholder="Enter quantity", id="amount"),
+                    classes="field half-width",
+                ),
+                Container(
+                    Label("Cost per Unit:"),
+                    Input(placeholder="Enter cost per unit", id="cost_per_unit"),
+                    classes="field half-width",
+                ),
+                classes="horizontal-fields",
             ),
             Horizontal(
                 Button("Add Item", variant="primary", id="add_item"),
@@ -68,7 +71,7 @@ class AddInvoiceItemsScreen(Screen):
         items_list.clear()
 
         # Get current items for this invoice
-        invoice_data, items = get_invoice_data(self.invoice_id)
+        _, items = get_invoice_data(self.invoice_id)
 
         if items:
             for item in items:

@@ -94,7 +94,7 @@ class SenderFormScreen(Screen):
                 )
                 return
 
-            if self.is_editing:
+            if self.is_editing and self.sender_data:
                 sender_id = update_sender(
                     self.sender_data[0], name, address, email, phone
                 )
