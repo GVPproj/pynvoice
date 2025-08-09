@@ -12,7 +12,7 @@ from database import (
     init_db,
 )
 
-from screens.sender_management_screen import SenderManagementScreen
+from screens.provider.provider_management import ProviderManagement
 from screens.client_management_screen import ClientManagementScreen
 from screens.footer_message_management_screen import FooterMessageManagementScreen
 from screens.invoice_management_screen import InvoiceManagementScreen
@@ -63,7 +63,7 @@ class pynvoice(App):
         if event.button.id == "invoice_management":
             self.push_screen(InvoiceManagementScreen())
         elif event.button.id == "sender_management":
-            self.push_screen(SenderManagementScreen())
+            self.push_screen(ProviderManagement())
         elif event.button.id == "client_management":
             self.push_screen(ClientManagementScreen())
         elif event.button.id == "footer_management":
@@ -77,7 +77,7 @@ class pynvoice(App):
             if event.widget.id == "invoice_management":
                 self.push_screen(InvoiceManagementScreen())
             elif event.widget.id == "sender_management":
-                self.push_screen(SenderManagementScreen())
+                self.push_screen(ProviderManagement())
             elif event.widget.id == "client_management":
                 self.push_screen(ClientManagementScreen())
             elif event.widget.id == "footer_management":
