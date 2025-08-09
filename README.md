@@ -1,9 +1,14 @@
-# Pynvoice - Simple Invoives from the terminal
+# Pynvoice - Simple Invoices from the terminal
 
 ## TODO
 
-FOOTER MESSAGES
+### Refactor
 
-- we don't need to store these?
-- move input fields on to same row (input type number?)
+- context7 mcp
+- rename provider functions (from senders)
+- add j and k navigation
+- clients, footer messages and invoice screens to new folder structure modelled by provider
+- move number input fields on to same row (input type number?)
 - add delete functionality to lists for senders, clients, invoices
+- mimic solarized osaka theme
+- context7?
