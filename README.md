@@ -2,7 +2,7 @@
 
 > Simple terminal-based invoice generation with PDF export
 
-Pynvoice is a lightweight, terminal-based invoice management application built with Python and Textual. Create professional invoices directly from your command line with an intuitive TUI interface.
+Pynvoice is a lightweight, terminal-based invoice management application built with Python, using Textual and SQLite. Create professional invoices directly from your command line with an intuitive TUI interface.
 
 ## Screenshots
 
