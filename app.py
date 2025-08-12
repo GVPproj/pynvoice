@@ -44,7 +44,7 @@ class pynvoice(App):
             ),
             Container(
                 Button("📄 Invoices", id="invoice_management", classes="menu-option"),
-                Button("👤 Senders", id="sender_management", classes="menu-option"),
+                Button("👤 Providers", id="sender_management", classes="menu-option"),
                 Button("🏢 Clients", id="client_management", classes="menu-option"),
                 Button("💬 Messages", id="footer_management", classes="menu-option"),
                 Button(
