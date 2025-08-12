@@ -61,8 +61,6 @@ Navigate using Tab/Shift+Tab or click with your mouse. Press `q` to quit at any 
 
 ### Refactor
 
-- rename provider functions (from senders)
-- add j and k navigation, vim style
-- clients, footer messages and invoice screens to new folder structure modelled by provider
+- add hjkl navigation ie. vim 
 - move number input fields on to same row (input type number?)
 - add delete functionality to lists for senders, clients, invoices
