@@ -16,12 +16,8 @@ Pynvoice is a lightweight, terminal-based invoice management application built w
 
 ## Features
 
-- **🏢 Provider Management** - Manage your business information and sender details
-- **👤 Client Management** - Store and organize client information
-- **📄 Invoice Creation** - Generate professional invoices with line items
-- **💬 Footer Messages** - Add custom messages to your invoices
+- **🎨 TUI** - Clean terminal interface with mouse and keyboard navigation
 - **📤 PDF Export** - Export invoices as PDF files for sharing
-- **🎨 Modern TUI** - Clean terminal interface with Tokyo Night theme
 - **💾 SQLite Database** - Local data storage with no external dependencies
 
 ## Installation
@@ -65,10 +61,8 @@ Navigate using Tab/Shift+Tab or click with your mouse. Press `q` to quit at any 
 
 ### Refactor
 
-- context7 mcp
 - rename provider functions (from senders)
-- add j and k navigation
+- add j and k navigation, vim style
 - clients, footer messages and invoice screens to new folder structure modelled by provider
 - move number input fields on to same row (input type number?)
 - add delete functionality to lists for senders, clients, invoices
-- mimic solarized osaka theme
