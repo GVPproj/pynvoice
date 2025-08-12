@@ -7,6 +7,7 @@ from textual.widgets import (
     Static,
 )
 from textual.binding import Binding
+from textual.theme import Theme
 from database import (
     DB_FILE,
     init_db,
@@ -16,6 +17,26 @@ from screens.provider.provider_management import ProviderManagement
 from screens.client_management_screen import ClientManagementScreen
 from screens.footer_message_management_screen import FooterMessageManagementScreen
 from screens.invoice_management_screen import InvoiceManagementScreen
+
+# Define solarized-dark theme
+solarized_dark_theme = Theme(
+    name="solarized-dark",
+    primary="#268bd2",      # blue
+    secondary="#2aa198",    # cyan
+    accent="#d33682",       # magenta
+    foreground="#839496",   # base0
+    background="#002b36",   # base03
+    surface="#073642",      # base02
+    panel="#586e75",        # base01
+    success="#859900",      # green
+    warning="#b58900",      # yellow
+    error="#dc322f",        # red
+    dark=True,
+    variables={
+        "block-cursor-foreground": "#839496",
+        "input-selection-background": "#268bd240",
+    },
+)
 
 
 class pynvoice(App):
@@ -28,7 +49,10 @@ class pynvoice(App):
     ]
 
     def on_mount(self) -> None:
-        self.theme = "tokyo-night"
+        # Register the solarized-dark theme
+        self.register_theme(solarized_dark_theme)
+        # Set the app's theme
+        self.theme = "solarized-dark"
 
     def compose(self) -> ComposeResult:
         yield Header()
