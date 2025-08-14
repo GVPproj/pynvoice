@@ -14,23 +14,23 @@ from database import (
 )
 
 from screens.provider.provider_management import ProviderManagement
-from screens.client_management_screen import ClientManagementScreen
-from screens.footer_message_management_screen import FooterMessageManagementScreen
-from screens.invoice_management_screen import InvoiceManagementScreen
+from screens.client.client_management import ClientManagement
+from screens.message.message_management import MessageManagement
+from screens.invoice.invoice_management import InvoiceManagement
 
 # Define solarized-dark theme
 solarized_dark_theme = Theme(
     name="solarized-dark",
-    primary="#268bd2",      # blue
-    secondary="#2aa198",    # cyan
-    accent="#d33682",       # magenta
-    foreground="#839496",   # base0
-    background="#002b36",   # base03
-    surface="#073642",      # base02
-    panel="#586e75",        # base01
-    success="#859900",      # green
-    warning="#b58900",      # yellow
-    error="#dc322f",        # red
+    primary="#268bd2",  # blue
+    secondary="#2aa198",  # cyan
+    accent="#d33682",  # magenta
+    foreground="#839496",  # base0
+    background="#002b36",  # base03
+    surface="#073642",  # base02
+    panel="#586e75",  # base01
+    success="#859900",  # green
+    warning="#b58900",  # yellow
+    error="#dc322f",  # red
     dark=True,
     variables={
         "block-cursor-foreground": "#839496",
@@ -85,13 +85,13 @@ class pynvoice(App):
     def on_button_pressed(self, event) -> None:
         """Handle button presses on menu options."""
         if event.button.id == "invoice_management":
-            self.push_screen(InvoiceManagementScreen())
+            self.push_screen(InvoiceManagement())
         elif event.button.id == "sender_management":
             self.push_screen(ProviderManagement())
         elif event.button.id == "client_management":
-            self.push_screen(ClientManagementScreen())
+            self.push_screen(ClientManagement())
         elif event.button.id == "footer_management":
-            self.push_screen(FooterMessageManagementScreen())
+            self.push_screen(MessageManagement())
         elif event.button.id == "exit":
             self.exit()
 
@@ -99,13 +99,13 @@ class pynvoice(App):
         """Handle mouse clicks on menu options (fallback for any remaining static elements)."""
         if hasattr(event.widget, "id"):
             if event.widget.id == "invoice_management":
-                self.push_screen(InvoiceManagementScreen())
+                self.push_screen(InvoiceManagement())
             elif event.widget.id == "sender_management":
                 self.push_screen(ProviderManagement())
             elif event.widget.id == "client_management":
-                self.push_screen(ClientManagementScreen())
+                self.push_screen(ClientManagement())
             elif event.widget.id == "footer_management":
-                self.push_screen(FooterMessageManagementScreen())
+                self.push_screen(MessageManagement())
             elif event.widget.id == "exit":
                 self.exit()
 

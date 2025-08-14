@@ -12,10 +12,10 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_footer_messages
-from screens.footer_message_form_screen import FooterMessageFormScreen
+from screens.message.footer_message_form_screen import FooterMessageFormScreen
 
 
-class FooterMessageManagementScreen(Screen):
+class MessageManagement(Screen):
     """Screen for managing footer messages."""
 
     BINDINGS = [
