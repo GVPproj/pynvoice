@@ -1,12 +1,11 @@
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER
 from datetime import datetime
-import os
+
+# import os
 from database import get_invoice_data
+from pdf_styles import get_custom_styles, get_table_styles, LAYOUT
 
 
 def generate_invoice_pdf(invoice_id, output_filename=None):
@@ -51,33 +50,14 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
     # Create PDF document
     doc = SimpleDocTemplate(output_filename, pagesize=letter)
     story = []
-    styles = getSampleStyleSheet()
 
-    # Custom styles
-    title_style = ParagraphStyle(
-        "CustomTitle",
-        parent=styles["Heading1"],
-        fontSize=24,
-        textColor=colors.HexColor("#2E4057"),
-        alignment=TA_CENTER,
-        spaceAfter=30,
-    )
-
-    header_style = ParagraphStyle(
-        "HeaderStyle",
-        parent=styles["Normal"],
-        fontSize=12,
-        textColor=colors.HexColor("#2E4057"),
-        fontName="Helvetica-Bold",
-    )
-
-    normal_style = ParagraphStyle(
-        "NormalStyle", parent=styles["Normal"], fontSize=10, textColor=colors.black
-    )
+    # Get styles
+    styles = get_custom_styles()
+    table_styles = get_table_styles()
 
     # Title
-    story.append(Paragraph("INVOICE", title_style))
-    story.append(Spacer(1, 20))
+    story.append(Paragraph("INVOICE", styles["title"]))
+    story.append(Spacer(1, LAYOUT["spacing"]["title_bottom"]))
 
     # Invoice info section
     invoice_info_data = [
@@ -94,20 +74,13 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
         ],
     ]
 
-    invoice_info_table = Table(invoice_info_data, colWidths=[1.5 * inch, 2 * inch])
-    invoice_info_table.setStyle(
-        TableStyle(
-            [
-                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-                ("FONTSIZE", (0, 0), (-1, -1), 10),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-            ]
-        )
+    invoice_info_table = Table(
+        invoice_info_data, colWidths=LAYOUT["column_widths"]["invoice_info"]
     )
+    invoice_info_table.setStyle(TableStyle(table_styles["invoice_info"]))
 
     story.append(invoice_info_table)
-    story.append(Spacer(1, 30))
+    story.append(Spacer(1, LAYOUT["spacing"]["section_bottom"]))
 
     # Sender and Client information side by side
     # FR3.2: Sender and Client Inclusion
@@ -123,38 +96,35 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
     )
 
     sender_info = f"""<b>From:</b><br/>
-    <b>{sender_name or 'N/A'}</b><br/>
+    <b>{sender_name or "N/A"}</b><br/>
     {sender_address_formatted}<br/>
-    {sender_email or ''}<br/>
-    {sender_phone or ''}"""
+    {sender_email or ""}<br/>
+    {sender_phone or ""}"""
 
     client_info = f"""<b>To:</b><br/>
-    <b>{client_name or 'N/A'}</b><br/>
+    <b>{client_name or "N/A"}</b><br/>
     {client_address_formatted}<br/>
-    {client_email or ''}"""
+    {client_email or ""}"""
 
     contact_data = [
-        [Paragraph(sender_info, normal_style), Paragraph(client_info, normal_style)]
+        [
+            Paragraph(sender_info, styles["normal"]),
+            Paragraph(client_info, styles["normal"]),
+        ]
     ]
 
-    contact_table = Table(contact_data, colWidths=[3.5 * inch, 3.5 * inch])
-    contact_table.setStyle(
-        TableStyle(
-            [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 0),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-            ]
-        )
+    contact_table = Table(
+        contact_data, colWidths=LAYOUT["column_widths"]["contact_table"]
     )
+    contact_table.setStyle(TableStyle(table_styles["contact_table"]))
 
     story.append(contact_table)
-    story.append(Spacer(1, 40))
+    story.append(Spacer(1, LAYOUT["spacing"]["section_bottom"]))
 
     # Items table
     # FR4.3: Item Listing on PDF
-    story.append(Paragraph("Invoice Items", header_style))
-    story.append(Spacer(1, 10))
+    story.append(Paragraph("Invoice Items", styles["header"]))
+    story.append(Spacer(1, LAYOUT["spacing"]["items_header"]))
 
     # Table headers
     item_data = [["Description", "Quantity", "Unit Price", "Total"]]
@@ -179,56 +149,18 @@ def generate_invoice_pdf(invoice_id, output_filename=None):
     item_data.append(["", "", "Subtotal:", f"${subtotal:,.2f}"])
     item_data.append(["", "", "Grand Total:", f"${subtotal:,.2f}"])
 
-    items_table = Table(
-        item_data, colWidths=[3 * inch, 1 * inch, 1.25 * inch, 1.25 * inch]
-    )
-    items_table.setStyle(
-        TableStyle(
-            [
-                # Header row styling
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2E4057")),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("FONTSIZE", (0, 0), (-1, 0), 12),
-                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                # Data rows styling
-                ("FONTNAME", (0, 1), (-1, -3), "Helvetica"),
-                ("FONTSIZE", (0, 1), (-1, -3), 10),
-                (
-                    "ROWBACKGROUNDS",
-                    (0, 1),
-                    (-1, -3),
-                    [colors.white, colors.HexColor("#F8F9FA")],
-                ),
-                # Subtotal and total rows styling
-                ("FONTNAME", (0, -2), (-1, -1), "Helvetica-Bold"),
-                ("FONTSIZE", (0, -2), (-1, -1), 11),
-                ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#E9ECEF")),
-                # Alignment
-                ("ALIGN", (1, 1), (-1, -1), "RIGHT"),
-                ("ALIGN", (0, 0), (0, -1), "LEFT"),
-                # Borders
-                ("GRID", (0, 0), (-1, -3), 1, colors.HexColor("#DEE2E6")),
-                ("LINEBELOW", (0, -2), (-1, -2), 1, colors.HexColor("#6C757D")),
-                ("LINEBELOW", (0, -1), (-1, -1), 2, colors.HexColor("#2E4057")),
-                # Padding
-                ("TOPPADDING", (0, 1), (-1, -1), 8),
-                ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
-                ("LEFTPADDING", (0, 0), (-1, -1), 12),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 12),
-            ]
-        )
-    )
+    items_table = Table(item_data, colWidths=LAYOUT["column_widths"]["items_table"])
+    items_table.setStyle(TableStyle(table_styles["items_table"]))
 
     story.append(items_table)
-    story.append(Spacer(1, 40))
+    story.append(Spacer(1, LAYOUT["spacing"]["footer_top"]))
 
     # Footer message
     # FR6.4: Footer Message Inclusion
     if footer_message:
-        story.append(Paragraph("Notes:", header_style))
-        story.append(Spacer(1, 5))
-        story.append(Paragraph(footer_message, normal_style))
+        story.append(Paragraph("Notes:", styles["header"]))
+        story.append(Spacer(1, LAYOUT["spacing"]["notes_spacing"]))
+        story.append(Paragraph(footer_message, styles["normal"]))
 
     # Build PDF
     doc.build(story)
