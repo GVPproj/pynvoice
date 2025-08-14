@@ -174,7 +174,7 @@ class InvoiceFormScreen(Screen):
                     f"Invoice created successfully! (ID: {invoice_id})"
                 )
                 # Switch to add items screen - import here to avoid circular import
-                from screens.invoice_items_screen import AddInvoiceItemsScreen
+                from screens.invoice.invoice_items_screen import AddInvoiceItemsScreen
 
                 self.app.push_screen(AddInvoiceItemsScreen(invoice_id))
         except Exception as e:
