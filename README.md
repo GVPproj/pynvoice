@@ -1,4 +1,4 @@
-# Pynvoice 📄
+# Pynvoice 🐍📄
 
 > Simple terminal-based invoice generation with PDF export
 
