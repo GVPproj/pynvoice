@@ -6,11 +6,11 @@ Pynvoice is a lightweight, terminal-based invoice management application built w
 
 ## Screenshots
 
-### Home Screen
+Home Screen
 
 ![Home Screen](./assets/homeScreen.png)
 
-### Invoice Management
+Invoice Management
 
 ![Invoice Management](./assets/invoices.png)
 
@@ -61,6 +61,6 @@ Navigate using Tab/Shift+Tab or click with your mouse. Press `q` to quit at any 
 
 ### Refactor
 
-- add hjkl navigation ie. vim 
+- add hjkl navigation ie. vim
 - move number input fields on to same row (input type number?)
 - add delete functionality to lists for senders, clients, invoices
