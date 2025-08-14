@@ -12,10 +12,10 @@ from textual.widgets import (
 )
 from textual.containers import Container, Horizontal
 from database import list_clients
-from screens.client_form_screen import ClientFormScreen
+from screens.client.client_form import ClientForm
 
 
-class ClientManagementScreen(Screen):
+class ClientManagement(Screen):
     """Screen for managing clients."""
 
     BINDINGS = [
@@ -57,11 +57,11 @@ class ClientManagementScreen(Screen):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         if hasattr(event.item, "client_data"):
-            self.app.push_screen(ClientFormScreen(event.item.client_data))
+            self.app.push_screen(ClientForm(event.item.client_data))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "create":
-            self.app.push_screen(ClientFormScreen())
+            self.app.push_screen(ClientForm())
         elif event.button.id == "back":
             self.action_back()
 
